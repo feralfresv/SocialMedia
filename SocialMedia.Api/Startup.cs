@@ -1,6 +1,7 @@
 
 
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SocialMedia.Core.Interface;
+using SocialMedia.Core.Services;
 using SocialMedia.Infrastructure.Data;
 using SocialMedia.Infrastructure.Filters;
 using SocialMedia.Infrastructure.Repositories;
@@ -35,18 +37,22 @@ namespace SocialMedia.Api
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             })
             .ConfigureApiBehaviorOptions(options => {
-                options.SuppressModelStateInvalidFilter = true;
+                //options.SuppressModelStateInvalidFilter = true;
             });
 
             //Definir nuestras dependencias
             services.AddDbContext<SocialMediaContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
 
+            services.AddTransient<IPostService, PostService>();
             services.AddTransient<IPostRepository, PostRepositoy>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddMvc(options => 
             {
                 options.Filters.Add<ValidationFIlter>();
+            }).AddFluentValidation(o => {
+                o.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
         }
 

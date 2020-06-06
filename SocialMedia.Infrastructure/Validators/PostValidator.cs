@@ -14,11 +14,11 @@ namespace SocialMedia.Infrastructure.Validators
         {
             RuleFor(post => post.Description)
                 .NotNull()
-                .Length(10, 15);
+                .Length(10, 999);
 
             RuleFor(post => post.Date)
-                .g
-                .NotNull();
+                .NotNull()
+                .LessThan(DateTime.Now);
         }
     }
 }
