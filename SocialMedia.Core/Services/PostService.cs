@@ -1,9 +1,9 @@
-﻿using SocialMedia.Core.Entities;
+﻿ using SocialMedia.Core.Entities;
+using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
@@ -17,14 +17,14 @@ namespace SocialMedia.Core.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async  Task<Post> GetPost(int id)
+        public async Task<Post> GetPost(int id)
         {
             return await _unitOfWork.PostRepositroy.GetById(id);
         }
 
-        public async Task<IEnumerable<Post>> GetPosts()
+        public IEnumerable<Post> GetPosts()
         {
-            return await _unitOfWork.PostRepositroy.GetAll();
+            return _unitOfWork.PostRepositroy.GetAll();
         }
 
         public async Task InsertPost(Post post)
@@ -32,20 +32,33 @@ namespace SocialMedia.Core.Services
             var user = await _unitOfWork.PostRepositroy.GetById(post.UserId);
             if (user == null)
             {
-                throw new Exception("User doesn't exist");
+                throw new BusinessException("User doesn't exist");
             }
+
+            var userPosts = await _unitOfWork.PostRepositroy.GetPostsByUser(post.UserId);
+            if (userPosts.Count() < 10)
+            {
+                var lasPost = userPosts.OrderByDescending(o => o.Date).FirstOrDefault();
+                if ((DateTime.Now - lasPost.Date).TotalDays < 7)
+                {
+                    throw new BusinessException("Ypu are not able to publish the post");
+                }
+            }
+
             if (post.Description.Contains("Sexo") || post.Description.Contains("sexo"))
             {
-                throw new Exception("Content not allow");
+                throw new BusinessException("Content not allow");
             }
 
             await _unitOfWork.PostRepositroy.Add(post);
+            await _unitOfWork.SaveChangeAsync();
         }
 
         public async Task<bool> UpdatePost(Post post)
         {
-                await _unitOfWork.PostRepositroy.Update(post);
-                return true;
+            _unitOfWork.PostRepositroy.Update(post);
+            await _unitOfWork.SaveChangeAsync();
+            return true;
         }
         public async Task<bool> DeletePost(int id)
         {

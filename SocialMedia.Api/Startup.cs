@@ -32,11 +32,15 @@ namespace SocialMedia.Api
             services.AddControllers();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers().AddNewtonsoftJson(options =>
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilter>();
+                }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             })
-            .ConfigureApiBehaviorOptions(options => {
+            .ConfigureApiBehaviorOptions(options =>
+            {
                 //options.SuppressModelStateInvalidFilter = true;
             });
 
@@ -45,13 +49,14 @@ namespace SocialMedia.Api
                 options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
 
             services.AddTransient<IPostService, PostService>();
-            services.AddScoped(typeof(IRepository<>),typeof(BaseRepository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            services.AddMvc(options => 
+            services.AddMvc(options =>
             {
                 options.Filters.Add<ValidationFIlter>();
-            }).AddFluentValidation(o => {
+            }).AddFluentValidation(o =>
+            {
                 o.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
         }
