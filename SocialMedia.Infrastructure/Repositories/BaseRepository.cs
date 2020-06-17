@@ -2,10 +2,8 @@
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interface;
 using SocialMedia.Infrastructure.Data;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Infrastructure.Repositories
@@ -23,7 +21,7 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public IEnumerable<T> GetAll()
         {
-            return  _entites.AsEnumerable();
+            return _entites.AsEnumerable();
         }
         public async Task<T> GetById(int id)
         {
