@@ -7,15 +7,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interface;
 using SocialMedia.Core.Services;
 using SocialMedia.Infrastructure.Data;
 using SocialMedia.Infrastructure.Filters;
 using SocialMedia.Infrastructure.Interfaces;
-using SocialMedia.Core.CustomEntities;
 using SocialMedia.Infrastructure.Repositories;
 using SocialMedia.Infrastructure.Services;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace SocialMedia.Api
 {
@@ -49,7 +52,7 @@ namespace SocialMedia.Api
 
             //Definir nuestras dependencias
             services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
-              
+
             services.AddDbContext<SocialMediaContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
 
@@ -62,6 +65,15 @@ namespace SocialMedia.Api
                 var request = accesor.HttpContext.Request;
                 var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
                 return new UriService(absoluteUri);
+            });
+
+            services.AddSwaggerGen(doc =>
+            {
+                doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Meida Api", Version = "v1" });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                doc.IncludeXmlComments(xmlPath);
             });
 
             services.AddMvc(options =>
@@ -82,6 +94,13 @@ namespace SocialMedia.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(o =>
+            {
+                o.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media Api");
+                o.RoutePrefix = string.Empty;
+            });
 
             app.UseRouting();
 

@@ -12,7 +12,6 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000/api/post",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
