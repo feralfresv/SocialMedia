@@ -26,7 +26,7 @@ namespace SocialMedia.Api.Controllers
             if (IsValidUser(login))
             {
                 var token = GenerateToken();
-                return Ok(new { token});
+                return Ok(new { token });
             }
             return NotFound();
         }
@@ -64,7 +64,7 @@ namespace SocialMedia.Api.Controllers
             //Token
             var token = new JwtSecurityToken(header, payLoad);
 
-            return new JwtSecurityTokenHandler().WriteToken(token );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
     }

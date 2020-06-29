@@ -72,7 +72,7 @@ namespace SocialMedia.Api
 
             services.AddSwaggerGen(doc =>
             {
-                doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Meida Api", Version = "v1" });
+                doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Meida Apii", Version = "v1" });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -119,7 +119,7 @@ namespace SocialMedia.Api
             app.UseSwagger();
             app.UseSwaggerUI(o =>
             {
-                o.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media Api");
+                o.SwaggerEndpoint("../swagger/v1/swagger.json", "Social Media Api");
                 o.RoutePrefix = string.Empty;
             });
 
