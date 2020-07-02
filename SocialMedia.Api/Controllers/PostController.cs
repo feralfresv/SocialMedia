@@ -6,6 +6,7 @@ using SocialMedia.Api.Responses;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Enumerations;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Core.Services;
 using SocialMedia.Infrastructure.Interfaces;
@@ -37,6 +38,9 @@ namespace SocialMedia.Api.Controllers
         /// </summary>
         /// <param name="filters">Filters to apply</param>
         /// <returns></returns>
+        /// 
+        
+        [Authorize(Roles = nameof(RoleType.Administrator))]
         [HttpGet(Name = nameof(GetPost))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
